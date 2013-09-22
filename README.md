@@ -14,13 +14,9 @@ To get it working your going to need to compile and import the library
 ```
 svn co http://twitcurl.googlecode.com/svn/trunk/libtwitcurl
 ```
-Build it and libtwitcurl.so.1.0 is generated
+Build its and installs the lib files to the usr/lib directory (may need root privileges)
 ```
 make install
-```
-Move the file to the lib folder (I find that changing the name helps avoid some errors and makes it easier to find)
-```
-cp libtwitcurl.so.1.0 /usr/lib/libtwitcurl.so
 ```
 And to compile the demo application use
 ```
