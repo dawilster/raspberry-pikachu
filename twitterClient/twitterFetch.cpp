@@ -141,64 +141,6 @@ int main( int argc, char* argv[] )
         printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet error:\n%s\n", replyMsg.c_str() );
     }
 
-    /* Get followers' ids */
-    std::string nextCursor("");
-    std::string searchUser("nextbigwhat");
-    do
-    {
-        if( twitterObj.followersIdsGet( nextCursor, searchUser ) )
-        {
-            twitterObj.getLastWebResponse( replyMsg );
-            printf( "\ntwitterClient:: twitCurl::followersIdsGet for user [%s] web response:\n%s\n",
-                    searchUser.c_str(), replyMsg.c_str() );
-
-            // JSON: "next_cursor":1422208797779779359,
-            nextCursor = "";
-            size_t nNextCursorStart = replyMsg.find("next_cursor");
-            if( std::string::npos == nNextCursorStart )
-            {
-                nNextCursorStart += strlen("next_cursor:\"");
-                size_t nNextCursorEnd = replyMsg.substr(nNextCursorStart).find(",");
-                if( std::string::npos != nNextCursorEnd )
-                {
-                    nextCursor = replyMsg.substr(nNextCursorStart, (nNextCursorEnd - nNextCursorStart));
-                    printf("\nNEXT CURSOR: %s\n\n\n\n\n", nextCursor.c_str());
-                }
-            }
-        }
-        else {
-            twitterObj.getLastCurlError( replyMsg );
-            printf( "\ntwitterClient:: twitCurl::followersIdsGet error:\n%s\n", replyMsg.c_str() );
-            break;
-        }
-    } while( !nextCursor.empty() && nextCursor.compare("0") );
-
-    /* Get block list */
-    nextCursor = "";
-    if( twitterObj.blockListGet( nextCursor, false, false ) )
-    {
-        twitterObj.getLastWebResponse( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockListGet web response:\n%s\n", replyMsg.c_str() );
-    }
-    else
-    {
-        twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockListGet error:\n%s\n", replyMsg.c_str() );
-    }
-
-    /* Get blocked ids */
-    nextCursor = "";
-    if( twitterObj.blockIdsGet( nextCursor, true ) )
-    {
-        twitterObj.getLastWebResponse( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockIdsGet web response:\n%s\n", replyMsg.c_str() );
-    }
-    else
-    {
-        twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockIdsGet error:\n%s\n", replyMsg.c_str() );
-    }
-
     /* Search a string */
     printf( "\nEnter string to search: " );
     memset( tmpBuf, 0, 1024 );
