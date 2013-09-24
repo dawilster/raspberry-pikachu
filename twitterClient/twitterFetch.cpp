@@ -133,7 +133,7 @@ int main( int argc, char* argv[] )
     if( twitterObj.accountVerifyCredGet() )
     {
         twitterObj.getLastWebResponse( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet web response:\n%s\n", replyMsg.c_str() );
+        //printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet web response:\n%s\n", replyMsg.c_str() );
     }
     else
     {
@@ -154,6 +154,7 @@ int main( int argc, char* argv[] )
     if( twitterObj.search( tmpStr, tmpStr2 ) )
     {
         twitterObj.getLastWebResponse( replyMsg );
+        //replymsg is where the json is stored
         printf( "\ntwitterClient:: twitCurl::search web response:\n%s\n", replyMsg.c_str() );
     }
     else
