@@ -1,41 +1,39 @@
-#include "twitterClient.h"
-
+#include "twitterFetch.h"
 void printUsage()
 {
     printf( "\nUsage:\ntwitterClient -u username -p password\n" );
 }
 
-int main( int argc, char* argv[] )
+void authenticate()
 {
     /* Get username and password from command line args */
-    std::string userName( "" );
-    std::string passWord( "" );
-    if( argc > 4 )
-    {
-        for( int i = 1; i < argc; i += 2 )
-        {
-            if( 0 == strncmp( argv[i], "-u", strlen("-u") ) )
-            {
-                userName = argv[i+1];
-            }
-            else if( 0 == strncmp( argv[i], "-p", strlen("-p") ) )
-            {
-                passWord = argv[i+1];
-            }
-        }
-        if( ( 0 == userName.length() ) || ( 0 == passWord.length() ) )
-        {
-            printUsage();
-            return 0;
-        }
-    }
-    else
-    {
-        printUsage();
-        return 0;
-    }
+    std::string userName( "RaspPikachu" );
+    std::string passWord( "kenzo123" );
+    // if( argc > 4 )
+    // {
+    //     for( int i = 1; i < argc; i += 2 )
+    //     {
+    //         if( 0 == strncmp( argv[i], "-u", strlen("-u") ) )
+    //         {
+    //             userName = argv[i+1];
+    //         }
+    //         else if( 0 == strncmp( argv[i], "-p", strlen("-p") ) )
+    //         {
+    //             passWord = argv[i+1];
+    //         }
+    //     }
+    //     if( ( 0 == userName.length() ) || ( 0 == passWord.length() ) )
+    //     {
+    //         printUsage();
+    //         return 0;
+    //     }
+    // }
+    // else
+    // {
+    //     printUsage();
+    //     return 0;
+    // }
 
-    twitCurl twitterObj;
     std::string tmpStr, tmpStr2;
     std::string replyMsg;
     char tmpBuf[1024];
@@ -141,18 +139,13 @@ int main( int argc, char* argv[] )
         twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet error:\n%s\n", replyMsg.c_str() );
     }
+}
 
-    /* Search a string */
-    printf( "\nEnter string to search: " );
-    memset( tmpBuf, 0, 1024 );
-    gets( tmpBuf );
-    tmpStr = tmpBuf;
-    printf( "\nLimit search results to: " );
-    memset( tmpBuf, 0, 1024 );
-    gets( tmpBuf );
-    tmpStr2 = tmpBuf;
-    replyMsg = "";
-    if( twitterObj.search( tmpStr, tmpStr2 ) )
+int main( int argc, char* argv[] )
+{
+    authenticate();
+
+    if( twitterObj.search( "rmit", "1" ) )
     {
         twitterObj.getLastWebResponse( replyMsg );
         //replymsg is where the json is stored
