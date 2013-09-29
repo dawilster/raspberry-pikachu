@@ -130,13 +130,13 @@ void authenticate()
     /* Account credentials verification */
     if( self.twitterObj.accountVerifyCredGet() )
     {
-        self.twitterObj.getLastWebResponse( replyMsg );
-        //printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet web response:\n%s\n", replyMsg.c_str() );
+        self.twitterObj.getLastWebResponse( self.replyMsg );
+        //printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet web response:\n%s\n", self.replyMsg.c_str() );
     }
     else
     {
-        self.twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet error:\n%s\n", replyMsg.c_str() );
+        self.twitterObj.getLastCurlError( self.replyMsg );
+        printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet error:\n%s\n", self.replyMsg.c_str() );
     }
 }
 
@@ -146,17 +146,17 @@ int main( int argc, char* argv[] )
 
     if( self.twitterObj.search( "rmit", "1" ) )
     {
-        self.twitterObj.getLastWebResponse( replyMsg );
-        //replymsg is where the json is stored
-        printf( "\ntwitterClient:: twitCurl::search web response:\n%s\n", replyMsg.c_str() );
+        self.twitterObj.getLastWebResponse( self.replyMsg );
+        //self.replyMsg is where the json is stored
+        printf( "\ntwitterClient:: twitCurl::search web response:\n%s\n", self.replyMsg.c_str() );
 
         //going to need to pass the json and create an instance of twitter object
         //then store a pointer to each twitter object in a vector pointer array
     }
     else
     {
-        self.twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::search error:\n%s\n", replyMsg.c_str() );
+        self.twitterObj.getLastCurlError( self.replyMsg );
+        printf( "\ntwitterClient:: twitCurl::search error:\n%s\n", self.replyMsg.c_str() );
     }
 
     return 0;
