@@ -35,17 +35,16 @@ void authenticate()
     // }
 
     std::string tmpStr, tmpStr2;
-    std::string replyMsg;
     char tmpBuf[1024];
 
     /* Set twitter username and password */
-    twitterObj.setTwitterUsername( userName );
-    twitterObj.setTwitterPassword( passWord );
+    self.twitterObj.setTwitterUsername( userName );
+    self.twitterObj.setTwitterPassword( passWord );
 
     /* OAuth flow begins */
     /* Step 0: Set OAuth related params. These are got by registering your app at twitter.com */
-    twitterObj.getOAuth().setConsumerKey( std::string( "vlC5S1NCMHHg8mD1ghPRkA" ) );
-    twitterObj.getOAuth().setConsumerSecret( std::string( "3w4cIrHyI3IYUZW5O2ppcFXmsACDaENzFdLIKmEU84" ) );
+    self.twitterObj.getOAuth().setConsumerKey( std::string( "vlC5S1NCMHHg8mD1ghPRkA" ) );
+    self.twitterObj.getOAuth().setConsumerSecret( std::string( "3w4cIrHyI3IYUZW5O2ppcFXmsACDaENzFdLIKmEU84" ) );
 
     /* Step 1: Check if we alredy have OAuth access token from a previous run */
     std::string myOAuthAccessTokenKey("");
@@ -72,14 +71,14 @@ void authenticate()
         /* If we already have these keys, then no need to go through auth again */
         printf( "\nUsing:\nKey: %s\nSecret: %s\n\n", myOAuthAccessTokenKey.c_str(), myOAuthAccessTokenSecret.c_str() );
 
-        twitterObj.getOAuth().setOAuthTokenKey( myOAuthAccessTokenKey );
-        twitterObj.getOAuth().setOAuthTokenSecret( myOAuthAccessTokenSecret );
+        self.twitterObj.getOAuth().setOAuthTokenKey( myOAuthAccessTokenKey );
+        self.twitterObj.getOAuth().setOAuthTokenSecret( myOAuthAccessTokenSecret );
     }
     else
     {
         /* Step 2: Get request token key and secret */
         std::string authUrl;
-        twitterObj.oAuthRequestToken( authUrl );
+        self.twitterObj.oAuthRequestToken( authUrl );
 
         /* Step 3: Get PIN  */
         //edit out twitter pin fetching
@@ -95,20 +94,20 @@ void authenticate()
             printf( "\nEnter the PIN provided by twitter: " );
             gets( tmpBuf );
             tmpStr = tmpBuf;
-            twitterObj.getOAuth().setOAuthPin( tmpStr );
+            self.twitterObj.getOAuth().setOAuthPin( tmpStr );
         }
         else
         {
             /* Else, pass auth url to twitCurl and get it via twitCurl PIN handling */
-            twitterObj.oAuthHandlePIN( authUrl );
+            self.twitterObj.oAuthHandlePIN( authUrl );
         }
 
         /* Step 4: Exchange request token with access token */
-        twitterObj.oAuthAccessToken();
+        self.twitterObj.oAuthAccessToken();
 
         /* Step 5: Now, save this access token key and secret for future use without PIN */
-        twitterObj.getOAuth().getOAuthTokenKey( myOAuthAccessTokenKey );
-        twitterObj.getOAuth().getOAuthTokenSecret( myOAuthAccessTokenSecret );
+        self.twitterObj.getOAuth().getOAuthTokenKey( myOAuthAccessTokenKey );
+        self.twitterObj.getOAuth().getOAuthTokenSecret( myOAuthAccessTokenSecret );
 
         /* Step 6: Save these keys in a file or wherever */
         std::ofstream oAuthTokenKeyOut;
@@ -129,14 +128,14 @@ void authenticate()
     /* OAuth flow ends */
 
     /* Account credentials verification */
-    if( twitterObj.accountVerifyCredGet() )
+    if( self.twitterObj.accountVerifyCredGet() )
     {
-        twitterObj.getLastWebResponse( replyMsg );
+        self.twitterObj.getLastWebResponse( replyMsg );
         //printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet web response:\n%s\n", replyMsg.c_str() );
     }
     else
     {
-        twitterObj.getLastCurlError( replyMsg );
+        self.twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet error:\n%s\n", replyMsg.c_str() );
     }
 }
@@ -145,9 +144,9 @@ int main( int argc, char* argv[] )
 {
     authenticate();
 
-    if( twitterObj.search( "rmit", "1" ) )
+    if( self.twitterObj.search( "rmit", "1" ) )
     {
-        twitterObj.getLastWebResponse( replyMsg );
+        self.twitterObj.getLastWebResponse( replyMsg );
         //replymsg is where the json is stored
         printf( "\ntwitterClient:: twitCurl::search web response:\n%s\n", replyMsg.c_str() );
 
@@ -156,7 +155,7 @@ int main( int argc, char* argv[] )
     }
     else
     {
-        twitterObj.getLastCurlError( replyMsg );
+        self.twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::search error:\n%s\n", replyMsg.c_str() );
     }
 
