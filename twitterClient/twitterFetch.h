@@ -4,9 +4,8 @@
 class twitterFetch
 {
 
-public:
 	twitCurl twitterObj;
 	std::string replyMsg;
-
+public:
 	void authenticate();
 };
