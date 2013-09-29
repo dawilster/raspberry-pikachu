@@ -84,6 +84,7 @@ int main( int argc, char* argv[] )
         twitterObj.oAuthRequestToken( authUrl );
 
         /* Step 3: Get PIN  */
+        //edit out twitter pin fetching
         memset( tmpBuf, 0, 1024 );
         printf( "\nDo you want to visit twitter.com for PIN (0 for no; 1 for yes): " );
         gets( tmpBuf );
@@ -156,6 +157,9 @@ int main( int argc, char* argv[] )
         twitterObj.getLastWebResponse( replyMsg );
         //replymsg is where the json is stored
         printf( "\ntwitterClient:: twitCurl::search web response:\n%s\n", replyMsg.c_str() );
+
+        //going to need to pass the json and create an instance of twitter object
+        //then store a pointer to each twitter object in a vector pointer array
     }
     else
     {
