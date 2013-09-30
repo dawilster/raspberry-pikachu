@@ -21,5 +21,5 @@ make install
 ```
 And to compile the application which runs all the code in the twitterFacade
 ```
-make all
+cd twitterClient && make all
 ```
