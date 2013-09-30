@@ -1,38 +1,9 @@
 #include "twitterFetch.h"
-void printUsage()
-{
-    printf( "\nUsage:\ntwitterClient -u username -p password\n" );
-}
-
-void authenticate()
+void twitterFetch::authenticate(twitCurl &twitterObj, std::string replyMsg)
 {
     /* Get username and password from command line args */
     std::string userName( "RaspPikachu" );
     std::string passWord( "kenzo123" );
-    // if( argc > 4 )
-    // {
-    //     for( int i = 1; i < argc; i += 2 )
-    //     {
-    //         if( 0 == strncmp( argv[i], "-u", strlen("-u") ) )
-    //         {
-    //             userName = argv[i+1];
-    //         }
-    //         else if( 0 == strncmp( argv[i], "-p", strlen("-p") ) )
-    //         {
-    //             passWord = argv[i+1];
-    //         }
-    //     }
-    //     if( ( 0 == userName.length() ) || ( 0 == passWord.length() ) )
-    //     {
-    //         printUsage();
-    //         return 0;
-    //     }
-    // }
-    // else
-    // {
-    //     printUsage();
-    //     return 0;
-    // }
 
     std::string tmpStr, tmpStr2;
     char tmpBuf[1024];
@@ -140,11 +111,10 @@ void authenticate()
     }
 }
 
-int main( int argc, char* argv[] )
-{
-    authenticate();
-
-    if( twitterObj.search( "rmit", "1" ) )
+void twitterFetch::search(){
+    std::string searchTerm("rmit"); 
+    std::string fetchCount("1"); 
+    if( twitterObj.search( searchTerm, fetchCount ) )
     {
         twitterObj.getLastWebResponse( replyMsg );
         //replyMsg is where the json is stored
@@ -157,7 +127,10 @@ int main( int argc, char* argv[] )
     {
         twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::search error:\n%s\n", replyMsg.c_str() );
-    }
+    } 
+}
 
-    return 0;
+twitterFetch::twitterFetch()
+{
+    authenticate(twitterObj, replyMsg);
 }

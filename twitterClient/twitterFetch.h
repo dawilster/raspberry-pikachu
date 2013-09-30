@@ -1,11 +1,11 @@
 
 #include "twitterClient.h"
-
 class twitterFetch
 {
-
 	twitCurl twitterObj;
-	std::string replyMsg;
+    std::string replyMsg;
 public:
-	void authenticate();
+	twitterFetch();
+	void authenticate(twitCurl &twitterObj, std::string replyMsg);
+	void search();
 };
