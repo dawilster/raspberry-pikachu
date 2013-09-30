@@ -1,12 +1,13 @@
-Twitter demo guide
+Twitter Fetch
 =================
-Took me all day to get it working on Arch Linux for RPi. I'll scrap the demo code and start building my own custom functions tomorrow.
+Took me all day to get it working on Arch Linux for RPi. I've got a barebones working version that just fetches a hardcoded keyword.
+Working on a facade at the moment
 
 
 Twitter client needs the Twitcurl 
 https://code.google.com/p/twitcurl/wiki/WikiHowToUseTwitcurlLibrary
 
-Linux/Ubuntu need these installed
+Linux/Ubuntu need these installed (if libcurl4-dev doesn't just make sure curl is installed)
 ```
 sudo apt-get install g++ libcurl4-dev subversion
 ```
@@ -18,7 +19,7 @@ Build its and installs the lib files to the usr/lib directory (may need root pri
 ```
 make install
 ```
-And to compile the demo application use
+And to compile the application which runs all the code in the twitterFacade
 ```
-g++ twitterClient.cpp -ltwitcurl
+make all
 ```
