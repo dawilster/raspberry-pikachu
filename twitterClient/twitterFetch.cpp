@@ -14,8 +14,8 @@ void twitterFetch::authenticate(twitCurl &twitterObj, std::string replyMsg)
 
     /* OAuth flow begins */
     /* Step 0: Set OAuth related params. These are got by registering your app at twitter.com */
-    twitterObj.getOAuth().setConsumerKey( std::string( "vlC5S1NCMHHg8mD1ghPRkA" ) );
-    twitterObj.getOAuth().setConsumerSecret( std::string( "3w4cIrHyI3IYUZW5O2ppcFXmsACDaENzFdLIKmEU84" ) );
+    twitterObj.getOAuth().setConsumerKey( std::string( "C7t7bmPUbPQo9bwCxeU5FA" ) );
+    twitterObj.getOAuth().setConsumerSecret( std::string( "owpP8c3tLElQJawXo6MBivVN4LlpyMQArGUO1wAVhiw" ) );
 
     /* Step 1: Check if we alredy have OAuth access token from a previous run */
     std::string myOAuthAccessTokenKey("");
@@ -111,33 +111,46 @@ void twitterFetch::authenticate(twitCurl &twitterObj, std::string replyMsg)
     }
 }
 
-std::string twitterFetch::search(){
+std::string twitterFetch::getPublicTimeline(){
+    /* Get public timeline */
+    replyMsg = "";
+    printf( "\nGetting public timeline\n" );
+    if( twitterObj.timelinePublicGet() )
+    {
+        twitterObj.getLastWebResponse( replyMsg );
+        return replyMsg;
+    }
+    else
+    {
+        twitterObj.getLastCurlError( replyMsg );
+        printf( "\ntwitterClient:: twitCurl::timelinePublicGet error:\n%s\n", replyMsg.c_str() );
+        return "";
+    }
+
+}
+
+std::string twitterFetch::searchTerm(){
+    replyMsg = "";
     std::string searchTerm("rmit"); 
     std::string fetchCount("1"); 
     if( twitterObj.search( searchTerm, fetchCount ) )
     {
         twitterObj.getLastWebResponse( replyMsg );
-        //replyMsg is where the json is stored
-        printf( "\ntwitterClient:: twitCurl::search web response:\n%s\n", replyMsg.c_str() );
-
         return replyMsg;
-
-        //going to need to pass the json and create an instance of twitter object
-        //then store a pointer to each twitter object in a vector pointer array
     }
     else
     {
         twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::search error:\n%s\n", replyMsg.c_str() );
-        return NULL;
+        return "";
     } 
 }
 
-std::string *getReplyMsg(){
+std::string twitterFetch::getReplyMsg(){
     return replyMsg;
 }
 
-twitCurl *getTwitterObj(){
+twitCurl twitterFetch::getTwitterObj(){
     return twitterObj;
 }
 
