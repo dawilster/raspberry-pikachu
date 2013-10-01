@@ -111,7 +111,7 @@ void twitterFetch::authenticate(twitCurl &twitterObj, std::string replyMsg)
     }
 }
 
-void twitterFetch::search(){
+std::string twitterFetch::search(){
     std::string searchTerm("rmit"); 
     std::string fetchCount("1"); 
     if( twitterObj.search( searchTerm, fetchCount ) )
@@ -120,6 +120,8 @@ void twitterFetch::search(){
         //replyMsg is where the json is stored
         printf( "\ntwitterClient:: twitCurl::search web response:\n%s\n", replyMsg.c_str() );
 
+        return replyMsg;
+
         //going to need to pass the json and create an instance of twitter object
         //then store a pointer to each twitter object in a vector pointer array
     }
@@ -127,7 +129,16 @@ void twitterFetch::search(){
     {
         twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::search error:\n%s\n", replyMsg.c_str() );
+        return NULL;
     } 
+}
+
+std::string *getReplyMsg(){
+    return replyMsg;
+}
+
+twitCurl *getTwitterObj(){
+    return twitterObj;
 }
 
 twitterFetch::twitterFetch()
