@@ -129,21 +129,26 @@ std::string twitterFetch::getPublicTimeline(){
 
 }
 
-std::string twitterFetch::searchTerm(){
+void twitterFetch::search(){
     replyMsg = "";
+    std::ofstream jsonOut;
     std::string searchTerm("rmit"); 
-    std::string fetchCount("1"); 
+    std::string fetchCount("1");
+    jsonOut.open("currentTweet.txt",std::ios::out);
     if( twitterObj.search( searchTerm, fetchCount ) )
     {
         twitterObj.getLastWebResponse( replyMsg );
-        return replyMsg;
+        //replyMsg is where the json is stored
+       jsonOut  << replyMsg.c_str() ;
+        //going to need to pass the json and create an instance of twitter object
+        //then store a pointer to each twitter object in a vector pointer array
     }
     else
     {
         twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::search error:\n%s\n", replyMsg.c_str() );
-        return "";
+        jsonOut << "error: " << replyMsg.c_str() ;
     } 
+    jsonOut.close();
 }
 
 std::string twitterFetch::getReplyMsg(){

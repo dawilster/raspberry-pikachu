@@ -7,7 +7,7 @@ class twitterFetch
 public:
 	twitterFetch();
 	void authenticate(twitCurl &twitterObj, std::string replyMsg);
-	std::string searchTerm();
+	void search();
 	std::string getReplyMsg();
 	twitCurl getTwitterObj();
 	std::string getPublicTimeline();
