@@ -11,4 +11,6 @@ public:
 	std::string getReplyMsg();
 	twitCurl getTwitterObj();
 	std::string getPublicTimeline();
+	void parseTweet();
+
 };

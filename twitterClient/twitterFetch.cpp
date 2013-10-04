@@ -1,4 +1,6 @@
 #include "twitterFetch.h"
+#include "Tweet.h"
+
 void twitterFetch::authenticate(twitCurl &twitterObj, std::string replyMsg)
 {
     /* Get username and password from command line args */
@@ -138,10 +140,7 @@ void twitterFetch::search(){
     if( twitterObj.search( searchTerm, fetchCount ) )
     {
         twitterObj.getLastWebResponse( replyMsg );
-        //replyMsg is where the json is stored
-       jsonOut  << replyMsg.c_str() ;
-        //going to need to pass the json and create an instance of twitter object
-        //then store a pointer to each twitter object in a vector pointer array
+        jsonOut  << replyMsg.c_str() ;
     }
     else
     {
@@ -149,6 +148,39 @@ void twitterFetch::search(){
         jsonOut << "error: " << replyMsg.c_str() ;
     } 
     jsonOut.close();
+    parseTweet();
+}
+
+void twitterFetch::parseTweet(){
+    std::string json, name, tweet;
+    std::ifstream jsonIn;
+    std::size_t found = 0;
+    std::size_t end=0;
+    Tweet *tweetInst; 
+
+    jsonIn.open("currentTweet.txt", std::ios::in);
+    getline(jsonIn, json); 
+
+    found = json.find("text");
+    found = found +7;
+
+    end = json.find("\",", found);
+    end = end - found;
+    tweet = json.substr(found, end);
+
+
+    found = json.find("\"name\"");
+    found = found +7;
+
+    end = json.find("\",", found);
+    end = end - found;
+    name = json.substr(found, end);
+
+    tweetInst = new Tweet(name, tweet);
+
+    std::cout<< "name: " << name << "\ntweet: " << tweet << "\n";
+
+
 }
 
 std::string twitterFetch::getReplyMsg(){
