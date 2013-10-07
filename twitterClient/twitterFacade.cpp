@@ -6,7 +6,9 @@ int main( int argc, char* argv[] )
 
 
     twitterFetch *twitter = new twitterFetch();
-    twitter->search();
+    Tweet tweet = twitter->search();
+
+	
 
 
 

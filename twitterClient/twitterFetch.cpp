@@ -131,7 +131,7 @@ std::string twitterFetch::getPublicTimeline(){
 
 }
 
-void twitterFetch::search(){
+Tweet twitterFetch::search(){
     replyMsg = "";
     std::ofstream jsonOut;
     std::string searchTerm("rmit"); 
@@ -148,10 +148,10 @@ void twitterFetch::search(){
         jsonOut << "error: " << replyMsg.c_str() ;
     } 
     jsonOut.close();
-    parseTweet();
+    return parseTweet();
 }
 
-void twitterFetch::parseTweet(){
+Tweet twitterFetch::parseTweet(){
     std::string json, name, tweet;
     std::ifstream jsonIn;
     std::size_t found = 0;
@@ -180,7 +180,7 @@ void twitterFetch::parseTweet(){
 
     std::cout<< "name: " << name << "\ntweet: " << tweet << "\n";
 
-
+	return *tweetInst;
 }
 
 std::string twitterFetch::getReplyMsg(){

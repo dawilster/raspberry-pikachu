@@ -1,4 +1,8 @@
 #include <iostream>
+
+#ifndef TWEET_H
+#define TWEET_H
+
 class Tweet{
 	std::string name, tweetContent;
 
@@ -8,3 +12,5 @@ public:
 	std::string getName();
 	std::string getTweet();
 };
+
+#endif
