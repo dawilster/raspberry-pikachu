@@ -3,6 +3,8 @@ Twitter Fetch
 Took me all day to get it working on Arch Linux for RPi. I've got a barebones working version that just fetches a hardcoded keyword.
 Working on a facade at the moment
 
+Implemented some threading to have a menu that isn't blocked by the IO of the tweet and display threads.
+It will display and error and exit if the display isn't connected,but it doesn't check for an internet connection.
 
 Twitter client needs the Twitcurl 
 https://code.google.com/p/twitcurl/wiki/WikiHowToUseTwitcurlLibrary
