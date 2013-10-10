@@ -1,5 +1,6 @@
 
-#include "twitterClient.h"
+//#include "twitterClient.h"
+#include "include/twitcurl.h"
 #include "Tweet.h"
 class twitterFetch
 {

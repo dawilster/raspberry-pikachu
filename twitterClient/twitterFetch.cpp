@@ -170,7 +170,7 @@ Tweet twitterFetch::parseTweet(){
 
 
     found = json.find("\"name\"");
-    found = found +7;
+    found = found +8;
 
     end = json.find("\",", found);
     end = end - found;
@@ -178,7 +178,7 @@ Tweet twitterFetch::parseTweet(){
 
     tweetInst = new Tweet(name, tweet);
 
-    std::cout<< "name: " << name << "\ntweet: " << tweet << "\n";
+    //std::cout<< "name: " << name << "\ntweet: " << tweet << "\n";
 
 	return *tweetInst;
 }
