@@ -12,6 +12,8 @@ extern "C"
 	#include <pthread.h>
 }
 
+#define SLEEP_DELAY 5
+
 #define INITIAL_DELAY 3
 #define BASE_DELAY 1
 #define DELAY_PER_CHAR 0.30
@@ -33,6 +35,10 @@ int main( void )
 	cout << "Creating Messenger..." << endl;
 	Messenger messenger( 5, 5 );
 
+	// Setting twitter thread to sleep
+	// hopefully this negates the lack of network connection for presentation
+	messenger.TweetSleep();
+
 	cout << "Creating Threads..." << endl;
 
 	int ret = pthread_create(
@@ -46,6 +52,7 @@ int main( void )
 		cout << "Error creating thread" << endl;
 		return 1;
 	}
+	messenger.TweetSleep();
 
 	ret = pthread_create(
 			&th2,
@@ -58,6 +65,7 @@ int main( void )
 		cout << "Error creating thread" << endl;
 		return 1;
 	}
+	messenger.DisplayStart();
 
 
 	cout << "Thread started..." << endl;
@@ -75,6 +83,14 @@ int main( void )
 		}
 
 		cout << "1. Status" << endl;
+		if( messenger.GetTweetState() == Sleeping )
+			cout << "2. Start Tweet thread" << endl;
+		else if( messenger.GetTweetState() == Stopped )
+			//cout << "2. Restart Tweet thread" << endl;
+			cout << "2. UNAVAILABLE" << endl;
+		else
+			cout << "2. Sleep Tweet thread" << endl;
+		cout << "3. Display message" << endl;
 		cout << "0. Exit" << endl << endl;
 	
 		getline( cin, input );
@@ -86,6 +102,70 @@ int main( void )
 			cout << "Number of strings in queue: " << messenger.GetNumStrings() << endl;
 			cout << "Delay between displaying tweets: " << messenger.GetDelay() << " seconds" << endl;
 			cout << "Max queue size: " << messenger.GetMaxQueueSize() << endl;
+			cout << "Thread status: ";
+			
+			cout << " Display - ";
+			switch( messenger.GetDisplayState() )
+			{
+				case Running:
+					cout << "Running";
+					break;
+				case Sleeping:
+					cout << "Sleeping";
+					break;
+				case Stopped:
+					cout << "Stopping";
+					break;
+				default:
+					cout << "Status Error";
+					break;
+			}
+
+			cout << "\n\t\tTweet - ";
+			switch( messenger.GetTweetState() )
+			{
+				case Running:
+					cout << "Running";
+					break;
+				case Sleeping:
+					cout << "Sleeping";
+					break;
+				case Stopped:
+					cout << "Stopping";
+					break;
+				default:
+					cout << "Status Error";
+					break;
+			}
+			cout << endl;
+
+		}
+		else if( input == "tweet" || input == "2" )
+		{
+			if( messenger.GetTweetState() == Running )
+			{
+				messenger.TweetSleep();
+				cout << "Tweet Sleeping" << endl;
+			}
+			else if( messenger.GetTweetState() == Stopped )
+			{
+				// Do nothing, thread stopped from error
+				cout << "An error has occured, restart program to fetch tweets.\n";
+				cout << "This is likely caused by a network problem" << endl;
+			}
+			else
+			{
+				messenger.TweetStart();	
+				cout << "Tweet Started" << endl;
+			}
+		}
+		else if( input == "message" || input == "3" )
+		{
+			cout << "Enter a string to display.\n> ";
+			string str;
+			getline( cin, str );
+			if( !messenger.AddString( str, true ) )
+				cout << "Queue full, unable to add message" << endl;
 		}
 		else if( input == "exit" || input == "0" )
 		{
@@ -121,30 +201,59 @@ void *tweet_thread( void *messenger )
 
 	twitterFetch *twitter = new twitterFetch();
 	Tweet tweet;
+	
+	bool running = true;
 
-	while( 1 )
+	string str;
+	twitter->GetLastResponse( str );
+	if( str != "" )
+	{
+		cout << "Tweet: Error - thread will exit, restart program for twitter feed" << endl;
+		cout << str << endl;
+		running = false;
+	}
+	else
+	{
+		cout << "Connected" << endl;
+	}
+
+	while( running )
 	{
 		//cout << "Tweet: Waiting for mutex" << endl;
 		pthread_mutex_lock( &messenger_mutex );
-		if( !mes->IsRunning() )
-		 {	
-			 pthread_mutex_unlock( &messenger_mutex );
-			 break;
-		 }
-		
-		//cout << "Tweet: Got mutex. Getting tweet" << endl;
-		tweet = twitter->search();
-		//cout << "Tweet: still here" << endl;
-		mes->AddString( tweet.getTweet() );	
-		//cout << "Tweet: Added Tweet" << endl;
 
-		//cout << "Tweet: Releasing mutex" << endl;
+		switch( mes->GetTweetState() )
+		{
+			case Running:
+				tweet = twitter->search();
+				mes->AddString( tweet.getTweet() );
+				break;
+			
+			// while sleeping, the thread still needs to loop
+			// checking thread status
+			case Sleeping:
+				// Do Nothing
+				break;
+
+			case Stopped:
+				// thread exiting
+				running = false;
+				break;
+		
+			default:
+				cout << "Tweet: State error, thread exiting." << endl;
+				mes->TweetStop();
+				running = false;
+				break;
+		}
+
 		pthread_mutex_unlock( &messenger_mutex );
 		sleep( mes->GetDelay() );
 	}
 	
 	delete twitter;
 
+	mes->TweetStop();
 	cout << "Tweet: Thread exiting" << endl;
 	pthread_exit( NULL );
 }
@@ -175,50 +284,68 @@ void *display_thread( void *messenger )
 		mes->StopRunning();
 		pthread_exit( NULL );
 	}
-	while( 1 )
+
+	bool running = true;
+
+	while( running )
 	{
-			//cout << "Display: Waitign for mutex" << endl;
 			pthread_mutex_lock( &messenger_mutex );
 
-			//cout << "Display: Got mutex." << endl;
-
-			//cout << "Display: Checking if thread should exit" << endl;
-			if( !mes->IsRunning() )
+			switch( mes->GetDisplayState() )
 			{
-					pthread_mutex_unlock( &messenger_mutex );
-					break;
-			}
-
-			//cout << "Display: Checking delay time has elapsed" << endl;
-			currentTime = time( NULL );
-			if( difftime( currentTime, displayTime ) > ( baseDelay + displayDelay ) || display )
-			{
-					display = false;
-
-					//cout << "Display: Checking for string to display" << endl;
-					if( mes->GetNumStrings() == 0 )
+				case Running:
+					currentTime = time( NULL );
+					if( difftime( currentTime, displayTime ) > ( baseDelay + displayDelay ) || display )
 					{
+						display = false;
+	
+						if( mes->GetNumStrings() == 0 )
+						{
 							//cout << "Display: No string to display" << endl;
-					}
-					else if( mes->GetNumStrings() == 1 )
-					{
+							string str_greet = "Hello, display a message and/or turn on the twitter feed";
+							displayDelay = BASE_DELAY + DELAY_PER_CHAR * str_greet.length();
+							mes->SetCurrentlyDisplayed( str_greet );
+							serial.Send( str_greet.c_str() );
+							displayTime = time( NULL );
+						}
+						else if( mes->GetNumStrings() == 1 )
+						{
+							// Only one string to displapy, get string without removing it from the queue
 							displayDelay = BASE_DELAY + DELAY_PER_CHAR * mes->GetNextString().length();
 							mes->SetCurrentlyDisplayed( mes->GetNextString() );
 							serial.Send( mes->GetNextString().c_str() );
-							//cout << "Display: Sending string" << endl;
 							displayTime = time( NULL );
-					}
-					else
-					{
+						}
+						else
+						{
+							// More than one string to display, get string and remove it from queue
 							displayDelay = BASE_DELAY + DELAY_PER_CHAR * mes->GetNextString().length();
 							mes->SetCurrentlyDisplayed( mes->GetNextString() );
 							serial.Send( mes->GetNextString( true ).c_str() );
-							//cout << "Display: Sending string" << endl;
 							displayTime = time( NULL );
+						}
 					}
+					break;
+
+					// while sleeping, the thread still needs to loop
+					// checking thread status
+				case Sleeping:
+					// Do Nothing
+					break;
+
+				case Stopped:
+					// thread exiting
+					running = false;
+					break;
+
+				// Shouldn't get here, but ya know...
+				default:
+					cout << "Display: State error (unhandled state), thread exiting." << endl;
+					mes->DisplayStop();
+					running = false;
+					break;
 			}
 
-			//cout << "Display: Releasing mutex" << endl;
 			pthread_mutex_unlock( &messenger_mutex );
 
 			sleep( 1 );

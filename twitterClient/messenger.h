@@ -6,6 +6,13 @@
 #include <cstring>
 #include <iostream>
 
+enum ThreadState 
+{
+	Running,
+	Sleeping,
+	Stopped
+};
+
 class Messenger
 {
 	public:
@@ -39,7 +46,23 @@ class Messenger
 		// this should be checked by thread
 		void StopRunning();
 
+		// Tell the tweet and display threads to stop (for exiting)
+		void TweetStop();
+		void DisplayStop();
+		
+		// Tell the tweet and display threads to sleep
+		// threads should keep checking to see if they should exit
+		void TweetSleep();
+		void DisplaySleep();
+
+		// When called, restarts sleeping threads.
+		// Currently doesn't restart stopped threads
+		void TweetStart();
+		void DisplayStart();
+
 		bool IsRunning();	
+		ThreadState GetTweetState();
+		ThreadState GetDisplayState();
 
 
 	private:
@@ -48,6 +71,9 @@ class Messenger
 		
 
 		bool isRunning_;
+		ThreadState tweetState_;
+		ThreadState displayState_;
+
 
 		std::vector< std::string > strings_;
 		std::string currentlyDisplayed_;

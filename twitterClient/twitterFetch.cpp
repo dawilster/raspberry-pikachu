@@ -1,6 +1,11 @@
 #include "twitterFetch.h"
 #include "Tweet.h"
 
+void twitterFetch::GetLastResponse( std::string& str )
+{
+	twitterObj.getLastCurlError( str );
+
+}
 void twitterFetch::authenticate(twitCurl &twitterObj, std::string replyMsg)
 {
     /* Get username and password from command line args */

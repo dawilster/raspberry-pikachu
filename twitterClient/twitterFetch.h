@@ -1,6 +1,6 @@
+#include <string>
 
-//#include "twitterClient.h"
-#include "include/twitcurl.h"
+#include "twitterClient.h"
 #include "Tweet.h"
 class twitterFetch
 {
@@ -15,4 +15,5 @@ public:
 	std::string getPublicTimeline();
 	Tweet parseTweet();
 
+	void GetLastResponse( std::string& str );
 };

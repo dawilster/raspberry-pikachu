@@ -77,14 +77,64 @@ unsigned int Messenger::GetDelay()
 
 void Messenger::StopRunning()
 {
+	this->DisplayStop();
+	this->TweetStop();
 	isRunning_ = false;
 }
 
+
+void Messenger::DisplayStop()
+{
+	displayState_ = Stopped;
+}
+
+
+void Messenger::TweetStop()
+{
+	tweetState_ = Stopped;
+}
+
+
+void Messenger::TweetSleep()
+{
+	tweetState_ = Sleeping;
+}
+
+
+void Messenger::DisplaySleep()
+{
+	displayState_ = Sleeping;
+}
+
+
+void Messenger::TweetStart()
+{
+	tweetState_ = Running;
+}
+
+
+void Messenger::DisplayStart()
+{
+	displayState_ = Running;
+}
 
 bool Messenger::IsRunning()
 {
 	return isRunning_;
 }
+
+
+ThreadState Messenger::GetTweetState()
+{
+	return tweetState_;
+}
+
+
+ThreadState Messenger::GetDisplayState()
+{
+	return displayState_;
+}
+
 
 void Messenger::SetCurrentlyDisplayed( std::string str )
 {
